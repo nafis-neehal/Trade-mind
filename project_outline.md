@@ -24,6 +24,6 @@
 
 - Based on last 12 hours' BTC/USD data (open/high/low/close for each hour - 12\*4 = 48 signals), ML model will predict next hours BTC/USD closing data
 - Every hour, that hour's BTC/USD data will be fetched via API and will be appended to feature store (automated script - github action)
-- Model will be retrained every 2 days using last 30 day's hourly data (automated script - github action)
+- Model will be retrained every 7 days using last 30 day's hourly data (automated script - github action)
 - Model will be running online 24\*7 serving predictions with dedicated API endpoints
 - A simple Streamlit dashboard will show last 12 hours data and projection of next hour's (x_axis = date/hour, y_axis = BTC/USD value)
