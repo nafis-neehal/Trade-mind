@@ -36,7 +36,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/engineered/stockdata_BTC_engineered.csv data/stockdata_BTC.json
+          git add . # Stages all changes
           git commit -m "Hourly update: Updated feature-engineered and raw data files"
           git push
         env:
