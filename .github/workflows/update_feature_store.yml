@@ -28,4 +28,5 @@ jobs:
           API_KEY: ${{ secrets.STOCK_API_KEY }} # Set your BTC/USD API key as a secret
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }} # Set your Hopsworks API key as a secret
         run: |
-          python src/feature_pipeline/feature_pipeline.py
+          cd src/feature_pipeline/
+          python feature_pipeline.py
