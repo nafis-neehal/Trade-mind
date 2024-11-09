@@ -71,15 +71,26 @@ class StockData:
             last_datetime = datetime.strptime(
                 last_datetime_str, '%Y-%m-%d %H:%M:%S')
 
-        start_date = last_datetime + timedelta(hours=1)
+        start_date = last_datetime  # + timedelta(hours=1)
         end_date = datetime.now() + timedelta(days=1)
 
         response = self.fetch_range_data_from_api(start_date, end_date)
 
         if response.status_code == 200:
             new_data = response.json()
-            data['values'] = new_data['values'] + data['values']
-            json.dump(data, open(f"../../data/{file_name}", 'w+'), indent=4)
-            print(f"Data in {file_name} updated successfully")
+
+            # check if new_data latest is already what we have
+            if new_data['values'][0]['datetime'] == last_datetime_str:
+                print(f"Data already up to date")
+                return -1  # data already up to date
+            else:
+                # take all the new data values except the last one
+                new_data['values'] = new_data['values'][:-1]
+                data['values'] = new_data['values'] + data['values']
+                json.dump(data, open(
+                    f"../../data/{file_name}", 'w+'), indent=4)
+                print(f"Data in {file_name} updated successfully")
+                return 1  # data updated successfully
         else:
             print(f"Failed to fetch data: {response.status_code}")
+            return 0

@@ -17,6 +17,8 @@ load_dotenv()
 with open('../config.yml', 'r') as file:
     configs = yaml.safe_load(file)
 
+global_flag = 1
+
 
 def run_stock_profile(symbol, init=False, **kwargs):
     stock = StockData(symbol)
@@ -29,7 +31,7 @@ def run_stock_profile(symbol, init=False, **kwargs):
             stock.init_data(days_before=30)
     else:
         # <--- use this to periodically update the data upto latest hour
-        stock.update_data()
+        global_flag = stock.update_data()
 
 
 def run_feature_engineering_pipeline(symbol):
@@ -78,9 +80,15 @@ if __name__ == "__main__":
     print(f"Fetching data for {symbol}...")
     run_stock_profile(symbol, init=False)
     print(f"Data fetched for {symbol}")
-    print("Running feature engineering pipeline...")
-    run_feature_engineering_pipeline(symbol)
-    print("Feature engineering pipeline completed")
-    print("Running feature store ingestion pipeline...")
-    run_feature_store_ingestion(symbol)
-    print("Feature store ingestion pipeline completed")
+
+    if global_flag == 1:
+        print("Running feature engineering pipeline...")
+        run_feature_engineering_pipeline(symbol)
+        print("Feature engineering pipeline completed")
+        print("Running feature store ingestion pipeline...")
+        run_feature_store_ingestion(symbol)
+        print("Feature store ingestion pipeline completed")
+    elif global_flag == -1:
+        print("Data already up to date")
+    else:
+        print("Failed to update data")
