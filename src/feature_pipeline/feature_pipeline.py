@@ -1,3 +1,4 @@
+from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 import os
@@ -8,13 +9,17 @@ from FeatureProcessor import FeatureProcessor
 from HopsworkFeatureStore import HopsworkFeatureStore
 from StockData import StockData
 
-
 import warnings
 warnings.filterwarnings('ignore')
 
 load_dotenv()
 
-with open('../config.yml', 'r') as file:
+# Define the base directory as the project root
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Use BASE_DIR to dynamically load the config file
+CONFIG_FILE = BASE_DIR / "src" / "config.yml"
+with open(CONFIG_FILE, 'r') as file:
     configs = yaml.safe_load(file)
 
 global_flag = 1
@@ -30,16 +35,16 @@ def run_stock_profile(symbol, init=False, **kwargs):
             # <---- default to 30 days, hourly data
             stock.init_data(days_before=30)
     else:
-        # <--- use this to periodically update the data upto latest hour
+        # <--- use this to periodically update the data up to the latest hour
+        global global_flag
         global_flag = stock.update_data()
 
 
 def run_feature_engineering_pipeline(symbol):
     # Process the features for stock
-    feature_processor = FeatureProcessor(
-        symbol=symbol
-    )
+    feature_processor = FeatureProcessor(symbol=symbol)
 
+    # Dynamically create the filename for JSON data
     file_name = feature_processor.create_filename()
     json_data = feature_processor.read_json_file(file_name)
     if json_data:
@@ -51,30 +56,25 @@ def run_feature_engineering_pipeline(symbol):
 def run_feature_store_ingestion(symbol):
     # Define your configurations
     PROJECT_NAME = "trade_mind"  # Replace with your Hopsworks project name
-    # Replace with your feature group name
     FEATURE_GROUP_NAME = f"{symbol.split('/')[0].lower()}_features"
-
-    # Replace with your Hopsworks API key
     API_KEY = os.getenv("HOPSWORKS_API_KEY")
 
-    data_eng_dir = '../../data/engineered/'
+    # Use BASE_DIR to dynamically build the paths for data directories and files
+    data_eng_dir = BASE_DIR / "data" / "engineered"
     file_name = f"stockdata_{symbol.split('/')[0]}_engineered.csv"
-
-    # Replace with your CSV file path
-    CSV_PATH = os.path.join(data_eng_dir, file_name)
+    CSV_PATH = data_eng_dir / file_name
 
     # Initialize and run the pipeline
     hopswork_fs = HopsworkFeatureStore(
         PROJECT_NAME,
         FEATURE_GROUP_NAME,
         API_KEY,
-        CSV_PATH
+        str(CSV_PATH)  # Convert Path object to string for compatibility
     )
     hopswork_fs.run_pipeline()
 
 
 if __name__ == "__main__":
-
     # Fetch data for BTC/USD for the last 20 days - initial data fetch
     symbol = "BTC/USD"
     print(f"Fetching data for {symbol}...")

@@ -1,16 +1,21 @@
+from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 import pandas as pd
 import hopsworks
 from hsfs.feature_group import FeatureGroup
-
-
 import warnings
+
 warnings.filterwarnings('ignore')
 
 load_dotenv()
 
-with open('../config.yml', 'r') as file:
+# Define the base directory as the project root
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Load the configuration file using BASE_DIR
+CONFIG_FILE = BASE_DIR / "src" / "config.yml"
+with open(CONFIG_FILE, 'r') as file:
     configs = yaml.safe_load(file)
 
 
@@ -23,11 +28,11 @@ class HopsworkFeatureStore:
             project_name (str): Name of the Hopsworks project.
             feature_group_name (str): Name of the feature group.
             api_key (str): Hopsworks API key.
-            csv_path (str): Path to the CSV file.
+            csv_path (str or Path): Path to the CSV file.
         """
         self.project_name = project_name
         self.feature_group_name = feature_group_name
-        self.csv_path = csv_path
+        self.csv_path = Path(csv_path)  # Ensure csv_path is a Path object
         self.api_key = api_key
         self.project = hopsworks.login(api_key_value=self.api_key)
         self.fs = self.project.get_feature_store()
@@ -35,6 +40,7 @@ class HopsworkFeatureStore:
 
     def load_data(self):
         """Loads data from the specified CSV file."""
+        # Use Path object for CSV path
         self.df = pd.read_csv(self.csv_path, parse_dates=['datetime'])
         print(f"Loaded {len(self.df)} rows from {self.csv_path}")
 

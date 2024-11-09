@@ -1,3 +1,4 @@
+from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 import os
@@ -6,11 +7,18 @@ import json
 import pandas as pd
 import pprint
 import warnings
+from datetime import datetime, timedelta
+
 warnings.filterwarnings('ignore')
 
 load_dotenv()
 
-with open('../config.yml', 'r') as file:
+# Define the base directory as the project root
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Load the configuration file using BASE_DIR
+CONFIG_FILE = BASE_DIR / "src" / "config.yml"
+with open(CONFIG_FILE, 'r') as file:
     configs = yaml.safe_load(file)
 
 
@@ -21,57 +29,61 @@ class StockData:
     #### Used for retraining model ####
 
     def calculate_date_range(self, before_days):
-        from datetime import datetime, timedelta
+        """Calculate the date range for data retrieval."""
         end_date = datetime.now() + timedelta(days=1)
         start_date = end_date - timedelta(days=before_days)
         return start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')
 
     def fetch_range_data_from_api(self, start_date, end_date):
+        """Fetch data from the API within a specified date range."""
         url = configs["stock_api_params"]["base_url"] + \
             configs["stock_api_params"]["endpoint"]
-        query_string = f"?apikey={os.getenv('STOCK_API_KEY')}&symbol={self.symbol}&interval={configs['stock_api_params']['time_interval']}"
-        query_string += f"&start_date={start_date}&end_date={end_date}&timezone={configs['stock_api_params']['timezone']}"
+        query_string = (
+            f"?apikey={os.getenv('STOCK_API_KEY')}&symbol={self.symbol}"
+            f"&interval={configs['stock_api_params']['time_interval']}"
+            f"&start_date={start_date}&end_date={end_date}"
+            f"&timezone={configs['stock_api_params']['timezone']}"
+        )
         print(url + query_string)
         response = requests.get(url + query_string)
         return response
 
     def save_response_to_json(self, response, file_name):
-        # check if dir exists o/w create it
-        data_dir = '../../data'
-        if not os.path.exists(data_dir):
-            os.makedirs(data_dir)
+        """Save the API response to a JSON file."""
+        data_dir = BASE_DIR / "data"
+        data_dir.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
 
-        with open(os.path.join(data_dir, file_name), 'w+') as file:
+        file_path = data_dir / file_name
+        with open(file_path, 'w') as file:
             json.dump(response.json(), file, indent=4)
-            print(f"Data fetched successfully and saved in {file_name}")
+            print(f"Data fetched successfully and saved in {file_path}")
 
     def init_data(self, days_before):
+        """Initialize data by fetching a specified number of days before the current date."""
         start_date, end_date = self.calculate_date_range(days_before)
         response = self.fetch_range_data_from_api(start_date, end_date)
 
         if response.status_code == 200:
-            # save the data in a pretty format in json file with indent - use json dump
-            self.save_response_to_json(
-                response,
-                # f"stockdata_{self.symbol.split('/')[0]}_{start_date}_{end_date}_{configs['stock_api_params']['time_interval']}.json"
-                f"stockdata_{self.symbol.split('/')[0]}.json"
-            )
+            file_name = f"stockdata_{self.symbol.split('/')[0]}.json"
+            self.save_response_to_json(response, file_name)
         else:
             print(f"Failed to fetch data: {response.status_code}")
 
     #### Used for hourly updates ####
-    # get the latest hour data that was saved in json file and then append the new data to it
     def update_data(self):
-        from datetime import datetime, timedelta
-
+        """Update data by fetching the latest available information and appending it."""
         file_name = f"stockdata_{self.symbol.split('/')[0]}.json"
-        with open(f"../../data/{file_name}", 'r') as file:
+        data_file_path = BASE_DIR / "data" / file_name
+
+        # Load existing data
+        with open(data_file_path, 'r') as file:
             data = json.load(file)
             last_datetime_str = data['values'][0]['datetime']
             last_datetime = datetime.strptime(
                 last_datetime_str, '%Y-%m-%d %H:%M:%S')
 
-        start_date = last_datetime  # + timedelta(hours=1)
+        # Calculate the date range for the update
+        start_date = last_datetime
         end_date = datetime.now() + timedelta(days=1)
 
         response = self.fetch_range_data_from_api(start_date, end_date)
@@ -79,18 +91,20 @@ class StockData:
         if response.status_code == 200:
             new_data = response.json()
 
-            # check if new_data latest is already what we have
+            # Check if the latest data is already up to date
             if new_data['values'][0]['datetime'] == last_datetime_str:
-                print(f"Data already up to date")
-                return -1  # data already up to date
+                print("Data already up to date")
+                return -1  # Data is already up to date
             else:
-                # take all the new data values except the last one
+                # Remove the last item in new_data to avoid duplication
                 new_data['values'] = new_data['values'][:-1]
                 data['values'] = new_data['values'] + data['values']
-                json.dump(data, open(
-                    f"../../data/{file_name}", 'w+'), indent=4)
+
+                # Save the updated data back to the JSON file
+                with open(data_file_path, 'w') as file:
+                    json.dump(data, file, indent=4)
                 print(f"Data in {file_name} updated successfully")
-                return 1  # data updated successfully
+                return 1  # Data updated successfully
         else:
             print(f"Failed to fetch data: {response.status_code}")
             return 0
