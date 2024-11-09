@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Feature Pipeline
         env:
-          API_KEY: ${{ secrets.STOCK_API_KEY }} # Set your BTC/USD API key as a secret
+          STOCK_API_KEY: ${{ secrets.STOCK_API_KEY }} # Set your BTC/USD API key as a secret
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }} # Set your Hopsworks API key as a secret
         run: |
           cd src/feature_pipeline/
