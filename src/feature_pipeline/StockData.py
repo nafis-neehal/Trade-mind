@@ -4,8 +4,7 @@ import os
 import requests
 import json
 import pandas as pd
-
-
+import pprint
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -83,6 +82,7 @@ class StockData:
             data['values'] = new_data['values'] + data['values']
             print(
                 f"before dumping updated file {data.keys()} {data['values'][0]}")
+            pprint.pprint(data)
             json.dump(data, open(f"../../data/{file_name}", 'w+'), indent=4)
             print(f"Data in {file_name} updated successfully")
         else:
