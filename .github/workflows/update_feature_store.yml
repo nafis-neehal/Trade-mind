@@ -2,7 +2,10 @@ name: Update BTC/USD Feature Store
 
 on:
   schedule:
-    - cron: "0 * * * *" # This triggers every hour on the hour
+    # Run every hour in EST (November to March, offset by +5)
+    - cron: "0 5-23,0-4 * 11-3 *"
+    # Run every hour in EDT (March to November, offset by +4)
+    - cron: "0 4-23,0-3 * 3-11 *"
   workflow_dispatch: # Allows manual trigger
 
 jobs:
@@ -23,9 +26,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Ensure required packages are in this file
 
-      - name: Collect BTC/USD Price and Update Feature Store
+      - name: Run Feature Pipeline
         env:
           API_KEY: ${{ secrets.API_KEY }} # Set your BTC/USD API key as a secret
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }} # Set your Hopsworks API key as a secret
         run: |
-          python -c "from your_module import update_feature_store; update_feature_store()"
+          python feature_pipeline.py
