@@ -2,7 +2,7 @@ name: Update BTC/USD Feature Store
 
 on:
   schedule:
-    - cron: "0 * * * *" # Runs every hour on the hour in UTC
+    - cron: "58 * * * *" # Runs every hour on the 58th minute of hour in UTC
   workflow_dispatch: # Allows manual trigger
 
 jobs:
