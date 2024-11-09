@@ -2,10 +2,8 @@ name: Update BTC/USD Feature Store
 
 on:
   schedule:
-    # Run every hour in EST (November to March, offset by +5)
-    - cron: "0 * * 11-03 *"
-    # Run every hour in EDT (March to November, offset by +4)
-    - cron: "0 * * 03-11 *"
+    # Run every hour
+    - cron: "0 * * * *"
   workflow_dispatch: # Allows manual trigger
 
 jobs:
