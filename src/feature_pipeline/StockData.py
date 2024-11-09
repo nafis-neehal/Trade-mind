@@ -74,15 +74,11 @@ class StockData:
         start_date = last_datetime + timedelta(hours=1)
         end_date = datetime.now() + timedelta(days=1)
 
-        print(start_date, end_date)
         response = self.fetch_range_data_from_api(start_date, end_date)
 
         if response.status_code == 200:
             new_data = response.json()
             data['values'] = new_data['values'] + data['values']
-            print(
-                f"before dumping updated file {data.keys()} {data['values'][0]}")
-            pprint.pprint(data)
             json.dump(data, open(f"../../data/{file_name}", 'w+'), indent=4)
             print(f"Data in {file_name} updated successfully")
         else:
