@@ -56,6 +56,7 @@ javaobj-py3==0.4.4
 jedi==0.19.1
 Jinja2==3.1.4
 jmespath==1.0.1
+joblib==1.4.2
 json5==0.9.25
 jsonpatch==1.33
 jsonpointer==3.0.0
@@ -129,6 +130,7 @@ rpds-py==0.21.0
 ruamel.yaml==0.17.17
 ruamel.yaml.clib==0.2.12
 s3transfer==0.10.3
+scikit-learn==1.5.2
 scipy==1.13.1
 Send2Trash==1.8.3
 six==1.16.0
@@ -137,6 +139,7 @@ soupsieve==2.6
 SQLAlchemy==1.4.48
 stack-data==0.6.3
 terminado==0.18.1
+threadpoolctl==3.5.0
 thrift==0.21.0
 tinycss2==1.4.0
 tomli==2.0.2
@@ -156,4 +159,5 @@ webcolors==24.8.0
 webencodings==0.5.1
 websocket-client==1.8.0
 widgetsnbextension==4.0.13
+xgboost==2.1.2
 zipp==3.20.2
