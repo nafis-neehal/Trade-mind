@@ -42,7 +42,7 @@ class StockData:
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
 
-        with open(os.path.join(data_dir, file_name), 'a+') as file:
+        with open(os.path.join(data_dir, file_name), 'w+') as file:
             json.dump(response.json(), file, indent=4)
             print(f"Data fetched successfully and saved in {file_name}")
 
