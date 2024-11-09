@@ -2,8 +2,7 @@ name: Update BTC/USD Feature Store
 
 on:
   schedule:
-    # Run every hour
-    - cron: "0 * * * *"
+    - cron: "0 * * * *" # Runs every hour on the hour in UTC
   workflow_dispatch: # Allows manual trigger
 
 jobs:
@@ -29,4 +28,5 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }} # Set your BTC/USD API key as a secret
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }} # Set your Hopsworks API key as a secret
         run: |
-          python ../src/feature/pipeline/feature_pipeline.py
+          cd ..
+          python src/feature_pipeline/feature_pipeline.py
