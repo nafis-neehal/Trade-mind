@@ -58,7 +58,6 @@ class FeatureProcessor:
 
     # gets json data as input and returns a dataframe
     def save_json_features_to_dataframe(self, data):
-        print(data.keys())
         df = pd.json_normalize(data['values'])
         return df
 

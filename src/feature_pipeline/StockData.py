@@ -81,6 +81,8 @@ class StockData:
         if response.status_code == 200:
             new_data = response.json()
             data['values'] = new_data['values'] + data['values']
+            print(
+                f"before dumping updated file {data.keys()} {data['values'][0]}")
             json.dump(data, open(f"../../data/{file_name}", 'w+'), indent=4)
             print(f"Data in {file_name} updated successfully")
         else:

@@ -41,6 +41,8 @@ def run_feature_engineering_pipeline(symbol):
     file_name = feature_processor.create_filename()
     json_data = feature_processor.read_json_file(file_name)
     if json_data:
+        print(
+            f"after reading updated file {json_data.keys()} {json_data['values'][0]}")
         df = feature_processor.save_json_features_to_dataframe(json_data)
         engineered_df = feature_processor.feature_engineering(df)
         feature_processor.save_new_features_to_file(engineered_df)
