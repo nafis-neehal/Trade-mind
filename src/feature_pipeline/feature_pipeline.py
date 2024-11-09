@@ -78,11 +78,11 @@ if __name__ == "__main__":
     # Fetch data for BTC/USD for the last 20 days - initial data fetch
     symbol = "BTC/USD"
     print(f"Fetching data for {symbol}...")
-    run_stock_profile(symbol, init=True)
+    run_stock_profile(symbol, init=False)
     print(f"Data fetched for {symbol}")
-    # print("Running feature engineering pipeline...")
-    # run_feature_engineering_pipeline(symbol)
-    # print("Feature engineering pipeline completed")
-    # print("Running feature store ingestion pipeline...")
-    # run_feature_store_ingestion(symbol)
-    # print("Feature store ingestion pipeline completed")
+    print("Running feature engineering pipeline...")
+    run_feature_engineering_pipeline(symbol)
+    print("Feature engineering pipeline completed")
+    print("Running feature store ingestion pipeline...")
+    run_feature_store_ingestion(symbol)
+    print("Feature store ingestion pipeline completed")
