@@ -55,7 +55,8 @@ def run_feature_engineering_pipeline(symbol):
 
 def run_feature_store_ingestion(symbol):
     # Define your configurations
-    PROJECT_NAME = "trade_mind"  # Replace with your Hopsworks project name
+    # Replace with your Hopsworks project name
+    PROJECT_NAME = configs['hopsworks']['project_name']
     FEATURE_GROUP_NAME = f"{symbol.split('/')[0].lower()}_features"
     API_KEY = os.getenv("HOPSWORKS_API_KEY")
 
@@ -76,7 +77,7 @@ def run_feature_store_ingestion(symbol):
 
 if __name__ == "__main__":
     # Fetch data for BTC/USD for the last 20 days - initial data fetch
-    symbol = "BTC/USD"
+    symbol = configs['stock_api_params']['symbol']
     print(f"Fetching data for {symbol}...")
     run_stock_profile(symbol, init=False)
     print(f"Data fetched for {symbol}")

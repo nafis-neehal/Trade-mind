@@ -4,3 +4,7 @@ stock_api_params:
   base_url: "https://api.twelvedata.com/"
   endpoint: "time_series/"
   timezone: "America/New_York"
+  symbol: "BTC/USD"
+
+hopsworks:
+  project_name: "stock_mind"
