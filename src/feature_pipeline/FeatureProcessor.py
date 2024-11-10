@@ -89,6 +89,12 @@ class FeatureProcessor:
             df = df[(df['datetime'] >= self.start_date)
                     & (df['datetime'] <= self.end_date)]
 
+        # create uid column for feature store combining strings of double lag features
+        df['uid'] = df['open_lag_1'].astype(str) + '_' + df['high_lag_2'].astype(
+            str) + '_' + df['low_lag_3'].astype(str) + '_' + df['close_lag_4'].astype(str)
+
+        # df['uid'] = f"{df['open_lag_1']}_{df['high_lag_2']}_{df['low_lag_3']}_{df['close_lag_4']}"
+
         return df
 
     def save_new_features_to_file(self, df):

@@ -30,6 +30,6 @@
 
 ## Written Github Actions
 
-- One action will run one job hourly, which will consume the last hour's data from the API, run feature engineering pipeline on the data, and then insert it into the feature store ✅
+- One action will run one job hourly (each hour on the 58th minute), which will consume the current hour's latest data from the API, run feature engineering pipeline on the data, and then insert it into the feature store ✅
 - One action will run one job weekly, which will perform data cleanup on the CSV file (feature engineered data) and JSON file (raw data). Will keep only last 30 day's data.
 - One action will retrain the model on last 30 days data after the data cleanup has been performed, and then add this updated model to model registry in hopsworks. We need to make sure the updated model always serves prediction.

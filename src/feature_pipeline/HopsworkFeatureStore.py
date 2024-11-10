@@ -60,8 +60,9 @@ class HopsworkFeatureStore:
                 name=self.feature_group_name,
                 version=1,
                 description=description,
-                primary_key=["datetime"],
-                event_time="datetime"
+                primary_key=["uid"],
+                event_time="datetime",
+                online_enabled=True,
             )
             print(f"Created new feature group: {self.feature_group_name}")
 
