@@ -62,7 +62,7 @@ class FeatureProcessor:
             df[col] = df[col].astype(float)
 
         # Creating lag features for 'open', 'high', 'low', 'close' for the past 1 to 12 hours
-        for lag in range(1, 13):
+        for lag in range(0, 13):
             df[f'open_lag_{lag}'] = df['open'].shift(lag)
             df[f'high_lag_{lag}'] = df['high'].shift(lag)
             df[f'low_lag_{lag}'] = df['low'].shift(lag)
