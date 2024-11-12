@@ -55,24 +55,30 @@ class Trainer:
             print(f"Error deleting feature view: {e}")
 
     def get_retrain_data_from_feature_view(self):
-        """Pull the last 30 days of data from the feature view till yesterday."""
-        start_time = datetime.now() - timedelta(days=31)
-        end_time = datetime.now() - timedelta(days=1)
+        """Pull the last 30 days of data from the feature view till today."""
+        start_time = datetime.now() - timedelta(days=30)
+        end_time = datetime.now()
 
         # Get the data as a DataFrame from the feature view
         df = self.feature_view.get_batch_data(
             start_time=start_time, end_time=end_time)
+
+        # sort by datetime
+        df = df.sort_values(by='datetime', ascending=False)
         print("Data pulled from feature view for retraining successfully.")
         return df
 
-    def get_plot_data_from_feature_view(self):
+    def get_plot_data_from_feature_view(self, hours):
         # get last 12 hours of data starting from current hour to plot
-        start_time = datetime.now() - timedelta(hours=13)
-        end_time = datetime.now() - timedelta(hours=1)
+        start_time = datetime.now() - timedelta(hours=hours)
+        end_time = datetime.now()
 
         # Get the data as a DataFrame from the feature view
         df = self.feature_view.get_batch_data(
             start_time=start_time, end_time=end_time)
+
+        # sort by datetime
+        df = df.sort_values(by='datetime', ascending=False)
         print("Data pulled from feature view for plotting successfully.")
         return df
 
@@ -80,7 +86,7 @@ class Trainer:
         """Split data into training and test sets."""
         # Define feature columns based on lagged features
         feature_columns = [
-            f"{prefix}_lag_{i}" for i in range(1, 13) for prefix in ["open", "high", "low", "close"]
+            f"{prefix}_lag_{i}" for i in range(0, 13) for prefix in ["open", "high", "low", "close"]
         ]
 
         # Separate features and target
@@ -97,7 +103,7 @@ class Trainer:
         """Split data into features and labels."""
         # Define feature columns based on lagged features
         feature_columns = [
-            f"{prefix}_lag_{i}" for i in range(1, 13) for prefix in ["open", "high", "low", "close"]
+            f"{prefix}_lag_{i}" for i in range(0, 13) for prefix in ["open", "high", "low", "close"]
         ]
 
         # Separate features and target
@@ -111,9 +117,12 @@ class Trainer:
         print("Model training completed.")
         return model
 
-    def evaluate_model(self, model, X_test, y_test):
+    def evaluate_model(self, model, X_test, y_test, **kwargs):
         """Evaluate the model on the hold-out test set."""
         y_pred = model.predict(X_test)
+        # if show_pred in kwargs is true, print the predictions
+        if "show_pred" in kwargs:
+            print(f"Predictions: {y_pred}")
         mse = mean_squared_error(y_test, y_pred)
         mae = mean_absolute_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)

@@ -1,3 +1,4 @@
+import pprint
 from dotenv import load_dotenv
 import yaml
 from pathlib import Path
@@ -36,12 +37,12 @@ trainer = Trainer(
 )
 
 
-def return_plot_data():
+def return_plot_data(hours):
     # Create or retrieve feature view
     trainer.create_feature_view()
 
     # Get the plot data from the feature view
-    input_df = trainer.get_plot_data_from_feature_view()
+    input_df = trainer.get_plot_data_from_feature_view(hours)
 
     # get the datetime column from the input_df
     datetime_column = input_df['datetime']
@@ -57,12 +58,19 @@ def return_plot_data_prediction(input_features):
     return prediction
 
 
-def get_plot_data():
+def get_plot_data(hours):
     # Get the plot data
-    input_features, input_labels, datetime_column = return_plot_data()
+    input_features, input_labels, datetime_column = return_plot_data(
+        hours)
     prediction = return_plot_data_prediction(input_features)
     return {"features": input_features, "labels": input_labels,
             "prediction": prediction['predictions'], "datetime": datetime_column}
+
+
+# f, l, d = return_plot_data()
+# print(f)
+# print(l)
+# print(trainer.predict_with_hopsworks_api(f))
 
 
 # # Example input data (replace with your actual input structure)

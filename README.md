@@ -1,3 +1,7 @@
+## Live URL (Deployed in HF Space)
+
+https://huggingface.co/spaces/nafisneehal/trade-mind
+
 ## Project Outline
 
 - **Feature pipeline** (map raw data to ML features)
@@ -16,17 +20,16 @@
 ### URLS used:
 
 - Stock Public API:
-  - https://www.alphavantage.co/documentation/
   - https://twelvedata.com/ ✅
 - Feature store: https://docs.hopsworks.ai/3.1/ ✅
 
 ## Project Requirements:
 
-- Based on last 12 hours' BTC/USD data (open/high/low/close for each hour - 12\*4 = 48 signals), ML model will predict next hours BTC/USD closing data ✅
-- Every hour, that hour's BTC/USD data will be fetched via API and will be appended to feature store (automated script - github action)
+- Based on current + last 12 hours' BTC/USD data (open/high/low/close for each hour - 13\*4 = 52 signals), ML model will predict next hour's BTC/USD closing data ✅
+- Every hour, that hour's BTC/USD data will be fetched via API and will be appended to feature store (automated script - github action) ✅
 - Model will be retrained every 7 days using last 30 day's hourly data (automated script - github action)
 - Model will be running online 24\*7 serving predictions with dedicated API endpoints ✅
-- A simple Streamlit dashboard will show last 12 hours data and projection of next hour's (x_axis = date/hour, y_axis = BTC/USD value) ✅
+- A simple Gradio dashboard will show last 24 hours data and projection of next hour's (x_axis = date/hour, y_axis = BTC/USD value) ✅
 
 ## Written Github Actions
 
