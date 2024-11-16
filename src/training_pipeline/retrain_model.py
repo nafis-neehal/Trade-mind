@@ -34,9 +34,9 @@ def main():
     )
 
     # Step 0: Stop old deployment and Delete old deployed model
-    # model_stopped = trainer.stop_model_deployment()
-    # model_stopped.delete()
-    # print("Old model deleted successfully.")
+    model_stopped = trainer.stop_model_deployment()
+    model_stopped.delete()
+    print("Old model deleted successfully.")
 
     # Step 1: Create or retrieve feature view
     trainer.create_feature_view()
