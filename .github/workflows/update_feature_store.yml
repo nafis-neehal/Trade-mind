@@ -1,0 +1,44 @@
+name: Update BTC/USD Feature Store
+
+on:
+  schedule:
+    - cron: "58 * * * *" # Runs every hour on the 58th minute of hour in UTC
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  update_feature_store:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Ensures full history is checked out for pushing changes
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Ensure required packages are in this file
+
+      - name: Run Feature Pipeline
+        env:
+          STOCK_API_KEY: ${{ secrets.STOCK_API_KEY }} # Set your BTC/USD API key as a secret
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }} # Set your Hopsworks API key as a secret
+        run: |
+          python src/feature_pipeline/feature_pipeline.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add . # Stages all changes
+          git commit -m "Hourly update: Updated feature-engineered and raw data files"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub token for pushing changes
+

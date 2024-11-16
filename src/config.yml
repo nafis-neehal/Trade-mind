@@ -1,0 +1,10 @@
+#API params
+stock_api_params:
+  time_interval: "1h"
+  base_url: "https://api.twelvedata.com/"
+  endpoint: "time_series/"
+  timezone: "America/New_York"
+  symbol: "BTC/USD"
+
+hopsworks:
+  project_name: "stock_mind"
